@@ -1,0 +1,8 @@
+
+# type Users {
+#     id:         ID!
+#     name:       String!
+#     password:   String!
+#     createdAt:  Time!
+#     updatedAt:  Time!
+# }
