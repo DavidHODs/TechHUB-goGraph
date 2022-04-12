@@ -25,46 +25,8 @@ type Tag {
     name:   String!
 }
 
-type Query {
-  todos: [Todo!]!
-  post: Post!
-  posts: [Post!]!
-  user: User!
-  users: [User!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
-}
-
-type Mutation {
-  createTodo(input: NewTodo!): Todo!
-  createPOst(input: NewPost!): Post!
-  createUser(input: NewUser): User!
-}
-
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
-
-type User {
-  id: ID!
-  name: String!
-}
-
-type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
-}
-
-type Mutation {
-  createTodo(input: NewTodo!): Todo!
+input NewPost {
+    body:        String!
+    sharedBody:  String
+    image:       String
 }

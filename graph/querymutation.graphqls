@@ -1,0 +1,12 @@
+type Query {
+  post: Post!
+  posts: [Post!]!
+  user: User!
+  users: [User!]!
+}
+
+
+type Mutation {
+  createPost(input: NewPost!): Post!
+  createUser(input: NewUser): User!
+}

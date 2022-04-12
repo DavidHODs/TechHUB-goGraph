@@ -1,8 +1,14 @@
+input NewUser {
+  name: String!
+  email: String!
+  password: String!
+}
 
-# type Users {
-#     id:         ID!
-#     name:       String!
-#     password:   String!
-#     createdAt:  Time!
-#     updatedAt:  Time!
-# }
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  createdAt: Time!
+  updatedAt: Time!
+}

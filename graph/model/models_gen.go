@@ -2,19 +2,47 @@
 
 package model
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+import (
+	"time"
+)
+
+type NewPost struct {
+	Body       string  `json:"body"`
+	SharedBody *string `json:"sharedBody"`
+	Image      *string `json:"image"`
 }
 
-type Todo struct {
+type NewUser struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type Post struct {
+	ID         string     `json:"id"`
+	Body       string     `json:"body"`
+	SharedBody *string    `json:"sharedBody"`
+	Image      *string    `json:"image"`
+	CreatedAt  time.Time  `json:"createdAt"`
+	UpTimedAt  time.Time  `json:"upTimedAt"`
+	SharedAt   *time.Time `json:"sharedAt"`
+	Author     *User      `json:"author"`
+	SharedUser *User      `json:"sharedUser"`
+	Likes      *User      `json:"likes"`
+	Dislikes   *User      `json:"dislikes"`
+	Tags       *Tag       `json:"tags"`
+}
+
+type Tag struct {
 	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+	Name string `json:"name"`
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
