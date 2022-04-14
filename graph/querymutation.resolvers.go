@@ -12,6 +12,7 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
+	
 	panic(fmt.Errorf("not implemented"))
 }
 
