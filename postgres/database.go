@@ -24,7 +24,7 @@ func LoadEnv() (string, string, int, string, string, string, string) {
 	}
 
 	dbport, _ := strconv.Atoi(os.Getenv("dbport"))
-	port := os.Getenv("cport")
+	port := os.Getenv("port")
 	host :=  os.Getenv("host")
 	user := os.Getenv("user")
 	password := os.Getenv("password")
