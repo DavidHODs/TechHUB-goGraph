@@ -15,7 +15,7 @@ import (
 func main() {
 	port, host, _, _, _, _, _ := database.LoadEnv()
 
-	database.Connect()
+	database.ConnectAndMigrate()
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
