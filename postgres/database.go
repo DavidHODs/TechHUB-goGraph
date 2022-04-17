@@ -44,8 +44,6 @@ func ConnectAndMigrate() {
 		customerror.HandleError(err, true)
 	}
 
-	defer db.Close()
-
 	err = db.Ping()
 	if err != nil {
 		customerror.HandleError(err, true)

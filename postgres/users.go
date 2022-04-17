@@ -7,6 +7,7 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/customerror"
 )
 
+// models the user details
 type User struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -16,9 +17,6 @@ type User struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type UserMethods interface {
-	SaveUser() (int64, error) 
-}
 
 // It saves the registered user details into the database
 func SaveUser() (int64, error) {
