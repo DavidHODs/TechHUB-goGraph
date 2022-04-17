@@ -17,6 +17,8 @@ func main() {
 
 	database.ConnectAndMigrate()
 
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

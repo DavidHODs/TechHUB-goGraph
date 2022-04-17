@@ -6,9 +6,13 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
+	"strconv"
+	"time"
 
 	"github.com/DavidHODs/TechHUB-goGraph/graph/generated"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/model"
+	database "github.com/DavidHODs/TechHUB-goGraph/postgres"
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
@@ -17,13 +21,25 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
-	var user model.User
+	var user database.User
 
 	user.Name = input.Name
 	user.Email = input.Email
 	user.Password = input.Password
 
-	return &user, nil
+	id, err := database.SavePost()
+	if err != nil {
+		log.Println(err)
+	}
+
+	return &model.User{
+		ID:        strconv.FormatInt(id, 10),
+		Name:      user.Name,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}, err
 }
 
 func (r *queryResolver) Post(ctx context.Context) (*model.Post, error) {
