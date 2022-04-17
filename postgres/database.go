@@ -3,10 +3,10 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
+	"github.com/DavidHODs/TechHUB-goGraph/customerror"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -20,7 +20,7 @@ var Db *sql.DB
 func LoadEnv() (string, string, int, string, string, string, string) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("could not load env file")
+		customerror.HandleError(err, true)
 	}
 
 	dbport, _ := strconv.Atoi(os.Getenv("dbport"))
@@ -41,14 +41,14 @@ func ConnectAndMigrate() {
 	
 	db, err := sql.Open("postgres", databaseInfo)
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	fmt.Println("database connection successful")
@@ -57,7 +57,7 @@ func ConnectAndMigrate() {
 
 	err = Db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	driver, _ := postgres.WithInstance(Db, &postgres.Config{})
@@ -70,7 +70,7 @@ func ConnectAndMigrate() {
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	fmt.Println("database migration successful")

@@ -6,10 +6,10 @@ package graph
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
+	"github.com/DavidHODs/TechHUB-goGraph/customerror"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/generated"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/model"
 	database "github.com/DavidHODs/TechHUB-goGraph/postgres"
@@ -27,9 +27,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 	user.Email = input.Email
 	user.Password = input.Password
 
-	id, err := database.SavePost()
+	id, err := database.SaveUser()
 	if err != nil {
-		log.Println(err)
+		customerror.HandleError(err, false)
 	}
 
 	return &model.User{

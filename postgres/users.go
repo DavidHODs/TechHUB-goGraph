@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"time"
+
+	"github.com/DavidHODs/TechHUB-goGraph/customerror"
 )
 
 type User struct {
@@ -16,26 +17,27 @@ type User struct {
 }
 
 type UserMethods interface {
-	SavePost() (int64, error) 
+	SaveUser() (int64, error) 
 }
 
-func SavePost() (int64, error) {
+// It saves the registered user details into the database
+func SaveUser() (int64, error) {
 	var user User
 	stmt, err := Db.Prepare("INSERT INTO tech.users(name, email, password) VALUES(?, ?, ?")
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	defer stmt.Close()
 
 	res, err := stmt.Exec(user.Name, user.Email, user.Password)
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		log.Fatal(err)
+		customerror.HandleError(err, true)
 	}
 
 	rows, _ := res.RowsAffected()
