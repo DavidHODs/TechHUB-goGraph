@@ -26,7 +26,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 	password := input.Password
 	confirmPassword := input.Confirmpassword
 
-	id, err := database.SaveUser(name, email, password, confirmPassword)
+	id, hashedP, err := database.SaveUser(name, email, password, confirmPassword)
 	if err != nil {
 			utils.HandleError(err, false)
 		}
@@ -35,7 +35,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		ID:        strconv.FormatInt(id, 10),
 		Name:      name,
 		Email:     email,
-		Password:  password,
+		Password:  string(hashedP),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, err
