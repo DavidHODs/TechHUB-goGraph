@@ -1,10 +1,11 @@
 package database
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/DavidHODs/TechHUB-goGraph/customerror"
+	"github.com/DavidHODs/TechHUB-goGraph/utils"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 )
 
 // models the user details
@@ -19,28 +20,31 @@ type User struct {
 
 
 // It saves the registered user details into the database
-func SaveUser() (int64, error) {
-	var user User
-	stmt, err := Db.Prepare("INSERT INTO tech.users(name, email, password) VALUES(?, ?, ?")
+func SaveUser(name, email, password string) (int64, error) {
+	stmt, err := Db.Prepare(`INSERT INTO tech.users(name, email, password) 
+							VALUES($1, $2, $3)
+							RETURNING id`)
 	if err != nil {
-		customerror.HandleError(err, true)
+		utils.HandleError(err, false)
 	}
 
 	defer stmt.Close()
 
-	res, err := stmt.Exec(user.Name, user.Email, user.Password)
+	var id int64 = 0
+
+	_, err = stmt.Exec(name, email, password)
 	if err != nil {
-		customerror.HandleError(err, true)
+		if err, ok := err.(*pq.Error); ok {
+			if err.Code == pgerrcode.UniqueViolation {
+				utils.HandleError(utils.DupError(email), false)
+				pqError := &pq.Error{Message: error.Error(utils.DupError(email))}
+				
+				return id, pqError
+			}
+		} else {
+			utils.HandleError(err, false)
+		}
 	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		customerror.HandleError(err, true)
-	}
-
-	rows, _ := res.RowsAffected()
-
-	fmt.Printf("%d rows affected", rows)
 
 	return id, err
 }

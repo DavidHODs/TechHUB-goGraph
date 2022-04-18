@@ -1,6 +1,7 @@
-package customerror
+package utils
 
 import (
+	"errors"
 	"log"
 	"os"
 	"runtime"
@@ -17,3 +18,13 @@ func HandleError(err error, fatal bool) {
 		os.Exit(1)
 	}
 }
+
+// returns a duplicate error message which includes the duplicated field
+func DupError(err string) error {
+	return errors.New(err + DuplicateError)
+}
+
+// A key value pair for error type and returned error messages
+const (
+	DuplicateError = " record already exist"
+)
