@@ -11,11 +11,11 @@ import (
 )
 
 // It saves the registered user details into the database
-func SaveUser(name, email, password, passwordConfirmation string) (int64, []byte, error) {
+func SaveUser(name, email, password, passwordConfirmation string) (string, []byte, error) {
 	passwordError := utils.PasswordCheck(password, passwordConfirmation)
 	if passwordError != nil {
 		utils.HandleError(passwordError, false)
-		return 0, nil, passwordError
+		return "", nil, passwordError
 	}
 
 	stmt, err := Db.Prepare(`INSERT INTO tech.users(name, email, password) 
@@ -27,7 +27,7 @@ func SaveUser(name, email, password, passwordConfirmation string) (int64, []byte
 
 	defer stmt.Close()
 
-	var id int64 = 0
+	var id string = ""
 
 	hashedP, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
@@ -36,7 +36,7 @@ func SaveUser(name, email, password, passwordConfirmation string) (int64, []byte
 		return id, nil, hashError
 	}
 
-	_, err = stmt.Exec(name, email, hashedP)
+	err = stmt.QueryRow(name, email, hashedP).Scan(&id)
 	if err != nil {
 		if err, ok := err.(*pq.Error); ok {
 			if err.Code == pgerrcode.UniqueViolation {

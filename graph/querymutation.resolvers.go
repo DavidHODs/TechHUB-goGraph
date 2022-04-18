@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/DavidHODs/TechHUB-goGraph/graph/generated"
@@ -32,7 +31,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		}
 
 	return &model.User{
-		ID:        strconv.FormatInt(id, 10),
+		ID:        id,
 		Name:      name,
 		Email:     email,
 		Password:  string(hashedP),
