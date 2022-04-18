@@ -1,26 +1,19 @@
 package database
 
 import (
-	"time"
-
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 	"github.com/jackc/pgerrcode"
 	"github.com/lib/pq"
 )
 
-// models the user details
-type User struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-}
-
-
 // It saves the registered user details into the database
-func SaveUser(name, email, password string) (int64, error) {
+func SaveUser(name, email, password, passwordConfirmation string) (int64, error) {
+	passwordError := utils.PasswordCheck(password, passwordConfirmation)
+	if passwordError != nil {
+		utils.HandleError(passwordError, false)
+		return 0, passwordError
+	}
+
 	stmt, err := Db.Prepare(`INSERT INTO tech.users(name, email, password) 
 							VALUES($1, $2, $3)
 							RETURNING id`)

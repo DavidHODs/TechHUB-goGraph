@@ -13,9 +13,10 @@ type NewPost struct {
 }
 
 type NewUser struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name            string `json:"name"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	Confirmpassword string `json:"confirmpassword"`
 }
 
 type Post struct {
@@ -24,7 +25,7 @@ type Post struct {
 	SharedBody *string    `json:"sharedBody"`
 	Image      *string    `json:"image"`
 	CreatedAt  time.Time  `json:"createdAt"`
-	UpTimedAt  time.Time  `json:"upTimedAt"`
+	UpdatedAt  time.Time  `json:"updatedAt"`
 	SharedAt   *time.Time `json:"sharedAt"`
 	Author     *User      `json:"author"`
 	SharedUser *User      `json:"sharedUser"`

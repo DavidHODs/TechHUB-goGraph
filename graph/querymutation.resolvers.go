@@ -13,8 +13,6 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/graph/model"
 	database "github.com/DavidHODs/TechHUB-goGraph/postgres"
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
@@ -23,29 +21,21 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
-	var user database.User
+	name := input.Name
+	email := input.Email
+	password := input.Password
+	confirmPassword := input.Confirmpassword
 
-	user.Name = input.Name
-	user.Email = input.Email
-	user.Password = input.Password
-
-	id, err := database.SaveUser(user.Name, user.Email, user.Password)
+	id, err := database.SaveUser(name, email, password, confirmPassword)
 	if err != nil {
-		if err, ok := err.(*pq.Error); ok {
-			if err.Code == pgerrcode.UniqueViolation {
-				// utils.HandleError(utils.DupError(user.Email), false)
-				err = &pq.Error{Message: error.Error(utils.DupError(user.Email))}
-			} else {
-				utils.HandleError(err, false)
-			}
+			utils.HandleError(err, false)
 		}
-	}
 
 	return &model.User{
 		ID:        strconv.FormatInt(id, 10),
-		Name:      user.Name,
-		Email:     user.Email,
-		Password:  user.Password,
+		Name:      name,
+		Email:     email,
+		Password:  password,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, err

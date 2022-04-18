@@ -2,6 +2,7 @@ input NewUser {
   name: String!
   email: String!
   password: String!
+  confirmpassword: String!
 }
 
 type User {

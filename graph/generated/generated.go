@@ -61,7 +61,7 @@ type ComplexityRoot struct {
 		SharedBody func(childComplexity int) int
 		SharedUser func(childComplexity int) int
 		Tags       func(childComplexity int) int
-		UpTimedAt  func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
 	}
 
 	Query struct {
@@ -213,12 +213,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Tags(childComplexity), true
 
-	case "Post.upTimedAt":
-		if e.complexity.Post.UpTimedAt == nil {
+	case "Post.updatedAt":
+		if e.complexity.Post.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Post.UpTimedAt(childComplexity), true
+		return e.complexity.Post.UpdatedAt(childComplexity), true
 
 	case "Query.post":
 		if e.complexity.Query.Post == nil {
@@ -381,7 +381,7 @@ type Post {
     sharedBody:  String
     image:       String
     createdAt:   Time!
-    upTimedAt:   Time!
+    updatedAt:   Time!
     sharedAt:    Time
     author:      User!
     sharedUser:  User
@@ -416,6 +416,7 @@ type Mutation {
   name: String!
   email: String!
   password: String!
+  confirmpassword: String!
 }
 
 type User {
@@ -769,7 +770,7 @@ func (ec *executionContext) _Post_createdAt(ctx context.Context, field graphql.C
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Post_upTimedAt(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+func (ec *executionContext) _Post_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -787,7 +788,7 @@ func (ec *executionContext) _Post_upTimedAt(ctx context.Context, field graphql.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UpTimedAt, nil
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2748,6 +2749,14 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
+		case "confirmpassword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("confirmpassword"))
+			it.Confirmpassword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -2866,9 +2875,9 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "upTimedAt":
+		case "updatedAt":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Post_upTimedAt(ctx, field, obj)
+				return ec._Post_updatedAt(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
