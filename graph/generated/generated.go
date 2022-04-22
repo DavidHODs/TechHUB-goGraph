@@ -399,6 +399,7 @@ input NewPost {
     body:        String!
     sharedBody:  String!
     image:       String
+    author:      String!
 }`, BuiltIn: false},
 	{Name: "graph/querymutation.graphqls", Input: `type Query {
   post: Post!
@@ -2728,6 +2729,14 @@ func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
 			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "author":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("author"))
+			it.Author, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

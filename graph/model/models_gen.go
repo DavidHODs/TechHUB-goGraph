@@ -10,6 +10,7 @@ type NewPost struct {
 	Body       string  `json:"body"`
 	SharedBody string  `json:"sharedBody"`
 	Image      *string `json:"image"`
+	Author     string  `json:"author"`
 }
 
 type NewUser struct {

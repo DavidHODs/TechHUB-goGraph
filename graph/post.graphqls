@@ -29,4 +29,5 @@ input NewPost {
     body:        String!
     sharedBody:  String!
     image:       String
+    author:      String!
 }
