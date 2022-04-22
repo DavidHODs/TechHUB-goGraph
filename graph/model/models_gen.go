@@ -8,7 +8,7 @@ import (
 
 type NewPost struct {
 	Body       string  `json:"body"`
-	SharedBody *string `json:"sharedBody"`
+	SharedBody string  `json:"sharedBody"`
 	Image      *string `json:"image"`
 }
 
@@ -20,18 +20,18 @@ type NewUser struct {
 }
 
 type Post struct {
-	ID         string     `json:"id"`
-	Body       string     `json:"body"`
-	SharedBody *string    `json:"sharedBody"`
-	Image      *string    `json:"image"`
-	CreatedAt  time.Time  `json:"createdAt"`
-	UpdatedAt  time.Time  `json:"updatedAt"`
-	SharedAt   *time.Time `json:"sharedAt"`
-	Author     *User      `json:"author"`
-	SharedUser *User      `json:"sharedUser"`
-	Likes      *User      `json:"likes"`
-	Dislikes   *User      `json:"dislikes"`
-	Tags       *Tag       `json:"tags"`
+	ID         string    `json:"id"`
+	Body       string    `json:"body"`
+	SharedBody string    `json:"sharedBody"`
+	Image      string    `json:"image"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	SharedAt   time.Time `json:"sharedAt"`
+	Author     *User     `json:"author"`
+	SharedUser *User     `json:"sharedUser"`
+	Likes      *User     `json:"likes"`
+	Dislikes   *User     `json:"dislikes"`
+	Tags       *Tag      `json:"tags"`
 }
 
 type Tag struct {

@@ -8,16 +8,16 @@ scalar Time
 type Post {
     id:          ID!
     body:        String!
-    sharedBody:  String
-    image:       String
+    sharedBody:  String!
+    image:       String!
     createdAt:   Time!
     updatedAt:   Time!
-    sharedAt:    Time
+    sharedAt:    Time!
     author:      User!
-    sharedUser:  User
-    likes:       User
-    dislikes:    User
-    tags:        Tag
+    sharedUser:  User!
+    likes:       User!
+    dislikes:    User!
+    tags:        Tag!
 }
 
 type Tag {
@@ -27,6 +27,6 @@ type Tag {
 
 input NewPost {
     body:        String!
-    sharedBody:  String
+    sharedBody:  String!
     image:       String
 }

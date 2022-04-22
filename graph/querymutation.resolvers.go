@@ -15,8 +15,29 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
-	
-	panic(fmt.Errorf("not implemented"))
+	post := input.Body
+	sharedPost := input.SharedBody
+	postImage := input.SharedBody
+
+	id, post, err := database.SavePost(post, sharedPost, postImage)
+	if err != nil {
+		utils.HandleError(err, false)
+	}
+
+	return &model.Post{
+		ID:         id,
+		Body:       post,
+		SharedBody: sharedPost,
+		Image:      postImage,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+		SharedAt:   time.Now(),
+		Author:     nil,
+		SharedUser: nil,
+		Likes:      nil,
+		Dislikes:   nil,
+		Tags:       nil,
+	}, err
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
