@@ -20,13 +20,12 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	sharedPost := input.SharedBody
 	postImage := input.SharedBody
 
+	userID, userName, userEmail := database.ReturnUserDetails(postAuthor)
+
 	user := model.User{
-		ID:        postAuthor,
-		Name:      "",
-		Email:     "",
-		Password:  "",
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
+		ID:        userID,
+		Name:      userName,
+		Email:     userEmail,
 	}
 
 	id, post, err := database.SavePost(postAuthor, post, sharedPost, postImage)

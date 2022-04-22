@@ -52,3 +52,24 @@ func SaveUser(name, email, password, passwordConfirmation string) (string, []byt
 
 	return id, hashedP, err
 }
+
+
+func ReturnUserDetails(userId string) (string, string, string) {
+	stmt, err := Db.Prepare(`SELECT id, name, email FROM tech.users where id = $1`)
+	if err != nil {
+		utils.HandleError(err, false)
+	}
+
+	defer stmt.Close()
+
+	var id string = ""
+	var name string = ""
+	var email string = ""
+
+	err = stmt.QueryRow(userId).Scan(&id, &name, &email)
+	if err != nil {
+		utils.HandleError(err, false)
+	}
+
+	return id, name, email
+}
