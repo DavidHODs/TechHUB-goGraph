@@ -9,11 +9,12 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/graph"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/generated"
 	database "github.com/DavidHODs/TechHUB-goGraph/postgres"
+	"github.com/DavidHODs/TechHUB-goGraph/utils"
 )
 
 
 func main() {
-	port, host, _, _, _, _, _ := database.LoadEnv()
+	port, host, _, _, _, _, _ := utils.LoadEnv()
 
 	database.ConnectAndMigrate()
 
