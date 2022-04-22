@@ -15,8 +15,8 @@ func SavePost(body, sharedBody, image string) (string, string, error) {
 
 	postLength := len(body)
 	if postLength > 1024 {
-		utils.HandleError(errors.New("Post can not be longer than 1024 words"), false)
-		return "", "", errors.New("Post can not be longer than 1024 words")
+		utils.HandleError(errors.New("post can not be longer than 1024 words"), false)
+		return "", "", errors.New("post can not be longer than 1024 words")
 	}
 
 	stmt, err := Db.Prepare(`INSERT INTO tech.posts(body, shared_body, image)
@@ -24,7 +24,7 @@ func SavePost(body, sharedBody, image string) (string, string, error) {
 							RETURNING id`)
 	if err != nil {
 		utils.HandleError(err, false)
-		return "", "", errors.New("Something went wrong, try reposting")
+		return "", "", errors.New("something went wrong, try reposting")
 	}
 
 	defer stmt.Close()
@@ -34,7 +34,7 @@ func SavePost(body, sharedBody, image string) (string, string, error) {
 	err = stmt.QueryRow(body, sharedBody, image).Scan(&id)
 	if err != nil {
 		utils.HandleError(err, false)
-		return "", "", errors.New("Something went wrong, try reposting")
+		return "", "", errors.New("something went wrong, try reposting")
 	}
 
 	return id, body, nil
