@@ -15,11 +15,21 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
+	postAuthor := input.Author
 	post := input.Body
 	sharedPost := input.SharedBody
 	postImage := input.SharedBody
 
-	id, post, err := database.SavePost(post, sharedPost, postImage)
+	user := model.User{
+		ID:        postAuthor,
+		Name:      "",
+		Email:     "",
+		Password:  "",
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
+	}
+
+	id, post, err := database.SavePost(postAuthor, post, sharedPost, postImage)
 	if err != nil {
 		utils.HandleError(err, false)
 	}
@@ -32,7 +42,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 		SharedAt:   time.Now(),
-		Author:     nil,
+		Author:     &user,
 		SharedUser: nil,
 		Likes:      nil,
 		Dislikes:   nil,
