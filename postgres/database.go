@@ -13,6 +13,7 @@ import (
 
 var Db *sql.DB
 
+// creates a persistent connection to the database and migrates latest schema changes 
 func ConnectAndMigrate() {
 	_, host, dbport, user, password, dbname, sslmode := utils.LoadEnv()
 	

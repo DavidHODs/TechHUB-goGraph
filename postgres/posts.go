@@ -6,7 +6,7 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 )
 
-
+// saves created posts to the database
 func SavePost(author, body, sharedBody, image string) (string, string, error) {
 	if body == "" {
 		utils.HandleError(errors.New("post can not be blank"), false)

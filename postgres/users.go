@@ -45,31 +45,34 @@ func SaveUser(name, email, password, passwordConfirmation string) (string, []byt
 				
 				return id, nil, pqError
 			}
-		} else {
+		} 
 			utils.HandleError(err, false)
-		}
 	}
 
 	return id, hashedP, err
 }
 
-
-func ReturnUserDetails(userId string) (string, string, string) {
+// Returns user details. Limited to id, name and email for now as well as error if any
+func ReturnUserDetails(userId string) (string, string, string, error) {
 	stmt, err := Db.Prepare(`SELECT id, name, email FROM tech.users where id = $1`)
 	if err != nil {
 		utils.HandleError(err, false)
+		return "", "", "", errors.New("something went wrong, try again later")
 	}
 
 	defer stmt.Close()
 
-	var id string = ""
-	var name string = ""
-	var email string = ""
+	var (
+		id string = ""
+		name string = ""
+		email string = ""
+	)
 
 	err = stmt.QueryRow(userId).Scan(&id, &name, &email)
 	if err != nil {
 		utils.HandleError(err, false)
+		return "", "", "", errors.New("something went wrong, try again later")
 	}
 
-	return id, name, email
+	return id, name, email, nil
 }

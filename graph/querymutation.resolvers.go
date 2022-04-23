@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,13 +15,18 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 )
 
+// returns created post author data
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
 	postAuthor := input.Author
 	post := input.Body
 	sharedPost := input.SharedBody
 	postImage := input.SharedBody
 
-	userID, userName, userEmail := database.ReturnUserDetails(postAuthor)
+	userID, userName, userEmail, err := database.ReturnUserDetails(postAuthor)
+	if err != nil {
+		utils.HandleError(err, false)
+		return nil, errors.New("something went wrong, try again later")
+	}
 
 	user := model.User{
 		ID:        userID,
@@ -49,6 +55,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	}, err
 }
 
+// returns created user data 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
 	name := input.Name
 	email := input.Email
