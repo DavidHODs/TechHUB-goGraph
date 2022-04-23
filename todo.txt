@@ -1,0 +1,23 @@
+Blog
+- Schema redefinition
+
+
+
+Code Base 
+- Authorization
+- Sessions to get logged in id
+- Followers and Following
+- Likes and Unlikes with their Count 
+- Messaging 
+- Notifications 
+- Feed 
+- Profile 
+- Settings 
+- Handle Images 
+- Caching 
+- Testing
+- Dockerize
+- Quote Post and Counts 
+- Share Post and Counts 
+- Search Users 
+- Search Posts  
