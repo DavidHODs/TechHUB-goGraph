@@ -29,9 +29,9 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	}
 
 	user := model.User{
-		ID:        userID,
-		Name:      userName,
-		Email:     userEmail,
+		ID:    userID,
+		Name:  userName,
+		Email: userEmail,
 	}
 
 	id, post, err := database.SavePost(postAuthor, post, sharedPost, postImage)
@@ -55,7 +55,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	}, err
 }
 
-// returns created user data 
+// returns created user data
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
 	name := input.Name
 	email := input.Email
@@ -64,8 +64,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 
 	id, hashedP, err := database.SaveUser(name, email, password, confirmPassword)
 	if err != nil {
-			utils.HandleError(err, false)
-		}
+		utils.HandleError(err, false)
+	}
 
 	return &model.User{
 		ID:        id,
@@ -75,6 +75,16 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, err
+}
+
+// returns liked post data 
+func (*mutationResolver) LikePost(ctx context.Context, input *model.UserID) (*model.Post, error) {
+	panic("unimplemented")
+}
+
+// returns unliked post data 
+func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserID) (*model.Post, error) {
+	panic("unimplemented")
 }
 
 func (r *queryResolver) Post(ctx context.Context) (*model.Post, error) {
@@ -100,4 +110,5 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+
 type queryResolver struct{ *Resolver }

@@ -5,6 +5,10 @@ input NewUser {
   confirmpassword: String!
 }
 
+input UserID {
+  id: String!
+}
+
 type User {
   id: ID!
   name: String!
