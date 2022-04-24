@@ -1,5 +1,6 @@
 Blog
 - Schema redefinition
+- DB schema redefinition
 
 
 

@@ -9,6 +9,6 @@ type Query {
 type Mutation {
   createPost(input: NewPost!): Post!
   createUser(input: NewUser): User!
-  likePost(input: UserID): Post!
-  unlikePost(input: UserID): Post!
+  likePost(input: UserPostID): Post!
+  unlikePost(input: UserPostID): Post!
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 )
@@ -43,4 +44,32 @@ func SavePost(author, body, sharedBody, image string) (string, string, error) {
 	}
 
 	return id, body, nil
+}
+
+func LikePostAndUpdateCount(userID, postID string) (string, error) {
+	if userID == "" {
+		utils.HandleError(errors.New("you have to login before you can like a post"), false)
+		return "", errors.New("you have to login before you can like a post") 
+	}
+
+	stmt, err := Db.Prepare(`UPDATE tech.posts SET likes = $2 WHERE id = $1 RETURNING likes`)
+// 	UPDATE Customers
+// SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+// WHERE CustomerID = 1;
+	if err != nil {
+		utils.HandleError(err, false)
+		return "", errors.New("something went wrong, try again later")
+	}
+
+	var likesID string = ""
+
+	err = stmt.QueryRow(postID, userID).Scan(&likesID)
+	if err != nil {
+		utils.HandleError(err, false)
+		return "", errors.New("something went wrong, try again later")
+	}
+
+	fmt.Println(likesID)
+
+	return userID, nil
 }

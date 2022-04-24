@@ -47,8 +47,8 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreatePost func(childComplexity int, input model.NewPost) int
 		CreateUser func(childComplexity int, input *model.NewUser) int
-		LikePost   func(childComplexity int, input *model.UserID) int
-		UnlikePost func(childComplexity int, input *model.UserID) int
+		LikePost   func(childComplexity int, input *model.UserPostID) int
+		UnlikePost func(childComplexity int, input *model.UserPostID) int
 	}
 
 	Post struct {
@@ -86,13 +86,17 @@ type ComplexityRoot struct {
 		Password  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 	}
+
+	UserID struct {
+		UserID func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error)
 	CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error)
-	LikePost(ctx context.Context, input *model.UserID) (*model.Post, error)
-	UnlikePost(ctx context.Context, input *model.UserID) (*model.Post, error)
+	LikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error)
+	UnlikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error)
 }
 type QueryResolver interface {
 	Post(ctx context.Context) (*model.Post, error)
@@ -150,7 +154,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LikePost(childComplexity, args["input"].(*model.UserID)), true
+		return e.complexity.Mutation.LikePost(childComplexity, args["input"].(*model.UserPostID)), true
 
 	case "Mutation.unlikePost":
 		if e.complexity.Mutation.UnlikePost == nil {
@@ -162,7 +166,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UnlikePost(childComplexity, args["input"].(*model.UserID)), true
+		return e.complexity.Mutation.UnlikePost(childComplexity, args["input"].(*model.UserPostID)), true
 
 	case "Post.author":
 		if e.complexity.Post.Author == nil {
@@ -332,6 +336,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.UpdatedAt(childComplexity), true
 
+	case "UserID.userID":
+		if e.complexity.UserID.UserID == nil {
+			break
+		}
+
+		return e.complexity.UserID.UserID(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -412,9 +423,9 @@ type Post {
     updatedAt:   Time!
     sharedAt:    Time!
     author:      User!
-    sharedUser:  User!
-    likes:       User!
-    dislikes:    User!
+    sharedUser:  [UserID]!
+    likes:       [UserID]!
+    dislikes:    [UserID]!
     tags:        Tag!
 }
 
@@ -440,8 +451,8 @@ input NewPost {
 type Mutation {
   createPost(input: NewPost!): Post!
   createUser(input: NewUser): User!
-  likePost(input: UserID): Post!
-  unlikePost(input: UserID): Post!
+  likePost(input: UserPostID): Post!
+  unlikePost(input: UserPostID): Post!
 }`, BuiltIn: false},
 	{Name: "graph/user.graphqls", Input: `input NewUser {
   name: String!
@@ -450,8 +461,13 @@ type Mutation {
   confirmpassword: String!
 }
 
-input UserID {
-  id: String!
+input UserPostID {
+  userID: String!
+  postID: String!
+}
+
+type UserID {
+  userID : ID!
 }
 
 type User {
@@ -502,10 +518,10 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_likePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UserID
+	var arg0 *model.UserPostID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOUserID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, tmp)
+		arg0, err = ec.unmarshalOUserPostID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserPostID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -517,10 +533,10 @@ func (ec *executionContext) field_Mutation_likePost_args(ctx context.Context, ra
 func (ec *executionContext) field_Mutation_unlikePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UserID
+	var arg0 *model.UserPostID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOUserID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, tmp)
+		arg0, err = ec.unmarshalOUserPostID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserPostID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -691,7 +707,7 @@ func (ec *executionContext) _Mutation_likePost(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LikePost(rctx, args["input"].(*model.UserID))
+		return ec.resolvers.Mutation().LikePost(rctx, args["input"].(*model.UserPostID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -733,7 +749,7 @@ func (ec *executionContext) _Mutation_unlikePost(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UnlikePost(rctx, args["input"].(*model.UserID))
+		return ec.resolvers.Mutation().UnlikePost(rctx, args["input"].(*model.UserPostID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1060,9 +1076,9 @@ func (ec *executionContext) _Post_sharedUser(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.([]*model.UserID)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUserID2ᚕᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_likes(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
@@ -1095,9 +1111,9 @@ func (ec *executionContext) _Post_likes(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.([]*model.UserID)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUserID2ᚕᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_dislikes(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
@@ -1130,9 +1146,9 @@ func (ec *executionContext) _Post_dislikes(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.([]*model.UserID)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUserID2ᚕᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_tags(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
@@ -1659,6 +1675,41 @@ func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.C
 	res := resTmp.(time.Time)
 	fc.Result = res
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserID_userID(ctx context.Context, field graphql.CollectedField, obj *model.UserID) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserID",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2941,8 +2992,8 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUserID(ctx context.Context, obj interface{}) (model.UserID, error) {
-	var it model.UserID
+func (ec *executionContext) unmarshalInputUserPostID(ctx context.Context, obj interface{}) (model.UserPostID, error) {
+	var it model.UserPostID
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -2950,11 +3001,19 @@ func (ec *executionContext) unmarshalInputUserID(ctx context.Context, obj interf
 
 	for k, v := range asMap {
 		switch k {
-		case "id":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			it.UserID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "postID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postID"))
+			it.PostID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3423,6 +3482,37 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "updatedAt":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._User_updatedAt(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var userIDImplementors = []string{"UserID"}
+
+func (ec *executionContext) _UserID(ctx context.Context, sel ast.SelectionSet, obj *model.UserID) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userIDImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserID")
+		case "userID":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._UserID_userID(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)
@@ -4055,6 +4145,44 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋDavidHODsᚋTechHUB�
 	return ec._User(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNUserID2ᚕᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx context.Context, sel ast.SelectionSet, v []*model.UserID) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUserID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -4358,11 +4486,18 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalOUserID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx context.Context, v interface{}) (*model.UserID, error) {
+func (ec *executionContext) marshalOUserID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserID(ctx context.Context, sel ast.SelectionSet, v *model.UserID) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserID(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUserPostID2ᚖgithubᚗcomᚋDavidHODsᚋTechHUBᚑgoGraphᚋgraphᚋmodelᚐUserPostID(ctx context.Context, v interface{}) (*model.UserPostID, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputUserID(ctx, v)
+	res, err := ec.unmarshalInputUserPostID(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

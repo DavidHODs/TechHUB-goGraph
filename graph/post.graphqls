@@ -14,9 +14,9 @@ type Post {
     updatedAt:   Time!
     sharedAt:    Time!
     author:      User!
-    sharedUser:  User!
-    likes:       User!
-    dislikes:    User!
+    sharedUser:  [UserID]!
+    likes:       [UserID]!
+    dislikes:    [UserID]!
     tags:        Tag!
 }
 

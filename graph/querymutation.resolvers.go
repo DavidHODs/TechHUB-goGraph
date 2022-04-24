@@ -78,12 +78,37 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 }
 
 // returns liked post data 
-func (*mutationResolver) LikePost(ctx context.Context, input *model.UserID) (*model.Post, error) {
-	panic("unimplemented")
+func (*mutationResolver) LikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error) {
+	uID := input.UserID
+	pID := input.PostID
+
+	userID, err := database.LikePostAndUpdateCount(uID, pID)
+	if err != nil {
+		utils.HandleError(err, false)
+	}
+
+	return &model.Post{
+		ID:         pID,
+		Body:       "",
+		SharedBody: "",
+		Image:      "",
+		CreatedAt:  time.Time{},
+		UpdatedAt:  time.Time{},
+		SharedAt:   time.Time{},
+		Author:     &model.User{},
+		SharedUser: []*model.UserID{},
+		Likes:      []*model.UserID{
+			{
+				UserID: userID,
+			},
+		},
+		Dislikes:   []*model.UserID{},
+		Tags:       &model.Tag{},
+	}, err
 }
 
 // returns unliked post data 
-func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserID) (*model.Post, error) {
+func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error) {
 	panic("unimplemented")
 }
 

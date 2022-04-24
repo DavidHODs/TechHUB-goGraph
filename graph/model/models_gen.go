@@ -29,9 +29,9 @@ type Post struct {
 	UpdatedAt  time.Time `json:"updatedAt"`
 	SharedAt   time.Time `json:"sharedAt"`
 	Author     *User     `json:"author"`
-	SharedUser *User     `json:"sharedUser"`
-	Likes      *User     `json:"likes"`
-	Dislikes   *User     `json:"dislikes"`
+	SharedUser []*UserID `json:"sharedUser"`
+	Likes      []*UserID `json:"likes"`
+	Dislikes   []*UserID `json:"dislikes"`
 	Tags       *Tag      `json:"tags"`
 }
 
@@ -50,5 +50,10 @@ type User struct {
 }
 
 type UserID struct {
-	ID string `json:"id"`
+	UserID string `json:"userID"`
+}
+
+type UserPostID struct {
+	UserID string `json:"userID"`
+	PostID string `json:"postID"`
 }
