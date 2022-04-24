@@ -52,18 +52,17 @@ func LikePostAndUpdateCount(userID, postID string) (string, error) {
 		return "", errors.New("you have to login before you can like a post") 
 	}
 
-	stmt, err := Db.Prepare(`UPDATE tech.posts SET likes = $2 WHERE id = $1 RETURNING likes`)
-// 	UPDATE Customers
-// SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
-// WHERE CustomerID = 1;
+	stmt, err := Db.Prepare(`UPDATE tech.posts SET likes = $1 WHERE id = $2 RETURNING likes`)
 	if err != nil {
 		utils.HandleError(err, false)
 		return "", errors.New("something went wrong, try again later")
 	}
 
+	defer stmt.Close()
+
 	var likesID string = ""
 
-	err = stmt.QueryRow(postID, userID).Scan(&likesID)
+	err = stmt.QueryRow(userID, postID).Scan(&likesID)
 	if err != nil {
 		utils.HandleError(err, false)
 		return "", errors.New("something went wrong, try again later")
@@ -71,5 +70,5 @@ func LikePostAndUpdateCount(userID, postID string) (string, error) {
 
 	fmt.Println(likesID)
 
-	return userID, nil
+	return likesID, nil
 }

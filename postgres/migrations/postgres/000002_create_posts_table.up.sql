@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS tech.posts (
 	shared_body VARCHAR (1027),
 	image VARCHAR (127),
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-	update_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
 	shared_at TIMESTAMP WITH TIME ZONE,
 	author uuid NOT NULL REFERENCES tech.users (id) ON DELETE CASCADE ON UPDATE CASCADE,
 	shared_user uuid REFERENCES tech.users (id) ON DELETE CASCADE ON UPDATE CASCADE,
