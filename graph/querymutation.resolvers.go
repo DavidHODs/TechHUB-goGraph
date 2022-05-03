@@ -17,7 +17,7 @@ import (
 )
 
 // returns created post author data
-func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
+func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
 	postAuthor := input.Author
 	post := input.Body
 	sharedPost := input.SharedBody
@@ -111,6 +111,9 @@ func (*mutationResolver) LikePost(ctx context.Context, input *model.UserPostID) 
 	}, err
 }
 
+func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (*model.User, error) {
+	return nil, nil
+}
 // returns unliked post data 
 func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error) {
 	panic("unimplemented")

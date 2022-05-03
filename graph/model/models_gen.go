@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type LoginDetails struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type NewPost struct {
 	Body       string  `json:"body"`
 	SharedBody string  `json:"sharedBody"`

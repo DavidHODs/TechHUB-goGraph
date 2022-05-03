@@ -7,8 +7,9 @@ type Query {
 
 
 type Mutation {
-  createPost(input: NewPost!): Post!
+  createPost(input: NewPost): Post!
   createUser(input: NewUser): User!
+  login(input: LoginDetails): User!
   likePost(input: UserPostID): Post!
   unlikePost(input: UserPostID): Post!
 }

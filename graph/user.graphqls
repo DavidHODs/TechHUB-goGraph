@@ -5,6 +5,11 @@ input NewUser {
   confirmpassword: String!
 }
 
+input LoginDetails {
+  email: String!
+  password: String!
+}
+
 input UserPostID {
   userID: String!
   postID: String!
