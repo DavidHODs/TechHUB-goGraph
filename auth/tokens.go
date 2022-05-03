@@ -8,7 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-
+// Generates a token and assigns an email to its claims
 func GenerateToken(email string) (string, error) {
 	_, _, _, _, _, _, _, key := utils.LoadEnv()
 	secretKey := []byte(key)
@@ -16,6 +16,7 @@ func GenerateToken(email string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = email
+	// claims to the token expires after 24 hrs 
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
@@ -26,6 +27,7 @@ func GenerateToken(email string) (string, error) {
 	return tokenString, nil
 }
 
+// parses a token and returns the email in its claims 
 func ParseToken(tokenString string) (string, error) {
 	_, _, _, _, _, _, _, key := utils.LoadEnv()
 	secretKey := []byte(key)
