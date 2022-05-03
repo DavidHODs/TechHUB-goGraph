@@ -3,8 +3,6 @@ package database
 import (
 	"errors"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 	"github.com/jackc/pgerrcode"
 	"github.com/lib/pq"
@@ -29,12 +27,7 @@ func SaveUser(name, email, password, passwordConfirmation string) (string, []byt
 
 	var id string = ""
 
-	hashedP, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if err != nil {
-		hashError := errors.New("something went wrong from our end, try again later")
-		utils.HandleError(hashError, false)
-		return id, nil, hashError
-	}
+	hashedP, _ := utils.HashPassword(password)
 
 	err = stmt.QueryRow(name, email, hashedP).Scan(&id)
 	if err != nil {

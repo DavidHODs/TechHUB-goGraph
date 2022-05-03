@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/go-passwd/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // checks for password strength, password field match
@@ -20,4 +21,22 @@ func PasswordCheck(password, passwordConfirmation string) error {
 	}
 
 	return nil
+}
+
+// hashes the password of users 
+func HashPassword(password string) ([]byte, error) {
+	hashedP, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		hashError := errors.New("something went wrong from our end, try again later")
+		HandleError(hashError, false)
+		return nil, hashError
+	}
+
+	return hashedP, nil
+}
+
+// compares if given password during login attempt matches with stored hash
+func CheckHashAgainstPassword(hash, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
