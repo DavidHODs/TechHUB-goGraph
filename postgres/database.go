@@ -15,7 +15,7 @@ var Db *sql.DB
 
 // creates a persistent connection to the database and migrates latest schema changes 
 func ConnectAndMigrate() {
-	_, host, dbport, user, password, dbname, sslmode := utils.LoadEnv()
+	_, host, dbport, user, password, dbname, sslmode, _ := utils.LoadEnv()
 	
 	databaseInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", host, dbport, user, password, dbname, sslmode)
 	

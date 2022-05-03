@@ -8,7 +8,7 @@ import (
 )
 
 // loads the environment variables
-func LoadEnv() (string, string, int, string, string, string, string) {
+func LoadEnv() (string, string, int, string, string, string, string, string) {
 	err := godotenv.Load(".env")
 	if err != nil {
 		HandleError(err, true)
@@ -21,6 +21,7 @@ func LoadEnv() (string, string, int, string, string, string, string) {
 	password := os.Getenv("password")
 	dbname := os.Getenv("dbname")
 	sslmode := os.Getenv("sslmode")
+	secretKey := os.Getenv("secret_key")
 
-	return port, host, dbport, user, password, dbname, sslmode
+	return port, host, dbport, user, password, dbname, sslmode, secretKey
 }

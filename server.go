@@ -14,7 +14,7 @@ import (
 
 
 func main() {
-	port, host, _, _, _, _, _ := utils.LoadEnv()
+	port, host, _, _, _, _, _, _ := utils.LoadEnv()
 
 	database.ConnectAndMigrate()
 
