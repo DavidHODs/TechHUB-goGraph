@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/DavidHODs/TechHUB-goGraph/auth"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/generated"
 	"github.com/DavidHODs/TechHUB-goGraph/graph/model"
 	database "github.com/DavidHODs/TechHUB-goGraph/postgres"
@@ -67,11 +68,14 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		utils.HandleError(err, false)
 	}
 
+	token, _ := auth.GenerateToken(email)
+
 	return &model.User{
 		ID:        id,
 		Name:      name,
 		Email:     email,
 		Password:  string(hashedP),
+		Token:     token,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, err
