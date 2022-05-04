@@ -112,7 +112,24 @@ func (*mutationResolver) LikePost(ctx context.Context, input *model.UserPostID) 
 }
 
 func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (*model.User, error) {
-	return nil, nil
+	email := input.Email
+	password := input.Password
+
+	authenticated := auth.Authenticate(email, password)
+	if !authenticated {
+		utils.HandleError(errors.New("wrong email or password error"), false)
+		return nil, errors.New("wrong email or password error") 
+	}
+	
+	token, err := auth.GenerateToken(email)
+	if err != nil{
+		return nil, err
+	}
+
+	return &model.User{
+		Email:     email,
+		Token:     token,
+	}, nil
 }
 // returns unliked post data 
 func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error) {

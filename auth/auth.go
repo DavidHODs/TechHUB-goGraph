@@ -8,6 +8,7 @@ import (
 	"github.com/DavidHODs/TechHUB-goGraph/utils"
 )
 
+// pulls up the stored password hash via user email and checks if the supplied password on logi attempt matches
 func Authenticate(email, password string) bool {
 	stmt, err := myDB.Db.Prepare(`SELECT password from tech.users WHERE email = $1`)
 	if err != nil {
