@@ -7,6 +7,8 @@ require (
 	github.com/vektah/gqlparser/v2 v2.4.0
 )
 
+require github.com/gorilla/mux v1.8.0 // indirect
+
 require (
 	cloud.google.com/go v0.88.0 // indirect
 	cloud.google.com/go/spanner v1.24.0 // indirect
