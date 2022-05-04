@@ -71,28 +71,31 @@ func ReturnUserDetails(userId string) (string, string, string, error) {
 	return id, name, email, nil
 }
 
-// returns the id of user by checking via supplied email in the database
-func GetUserIdByEmail(email string) (string, error) {
-	stmt, err := Db.Prepare(`SELECT id from tech.users where email = $1`)
+// returns the id and hashed password of user by checking via supplied email in the database. Will probably refactor later as ReturnUserDetails already serve nearly the same purpose
+func GetUserDetailsByEmail(email string) (string, string, error) {
+	stmt, err := Db.Prepare(`SELECT id, password from tech.users where email = $1`)
 	if err != nil {
 		utils.HandleError(err, false)
-		return "", err
+		return "", "", err
 	}
 
 	defer stmt.Close()
 
-	var id string = ""
+	var (
+		id string = ""
+		password string = ""
+	)
 
-	err = stmt.QueryRow(email).Scan(&id)
+	err = stmt.QueryRow(email).Scan(&id, &password)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.HandleError(errors.New("user does not exist"), false)
-			return "", errors.New("user does not exist")
+			return "", "", errors.New("user does not exist")
 		}
 
-		return "", err
+		return "", "", err
 	}
 
-	return id, nil
+	return id, password, nil
 }
