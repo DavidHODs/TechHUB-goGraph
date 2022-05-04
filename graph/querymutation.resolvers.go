@@ -111,6 +111,7 @@ func (*mutationResolver) LikePost(ctx context.Context, input *model.UserPostID) 
 	}, err
 }
 
+// returns minor details of user on succesful login
 func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (*model.User, error) {
 	email := input.Email
 	password := input.Password
@@ -131,6 +132,24 @@ func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (
 		Token:     token,
 	}, nil
 }
+
+// refreshes token of loggedin user 
+func (r *mutationResolver) RefreshToken(ctx context.Context, input *model.Token) (*model.User, error) {
+	tokenStr := input.Token
+
+	email, err := auth.ParseToken(tokenStr)
+	if err != nil {
+		utils.HandleError(errors.New("access denied"), false)
+		return nil, errors.New("access denied")
+	}
+
+	token, _ := auth.GenerateToken(email)
+	
+	return &model.User{
+		Token:     token,
+	}, nil
+}
+
 // returns unliked post data 
 func (*mutationResolver) UnlikePost(ctx context.Context, input *model.UserPostID) (*model.Post, error) {
 	panic("unimplemented")
