@@ -18,6 +18,13 @@ import (
 
 // returns created post author data
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
+	
+	user := auth.ForContext(ctx)
+	if user == nil {
+		utils.HandleError(errors.New(("access denied")), false)
+		return &model.Post{}, errors.New(("access denied"))
+	}
+
 	postAuthor := input.Author
 	post := input.Body
 	sharedPost := input.SharedBody
@@ -26,10 +33,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost)
 	userID, userName, userEmail, err := database.ReturnUserDetails(postAuthor)
 	if err != nil {
 		utils.HandleError(err, false)
-		return nil, errors.New("something went wrong, try again later")
+		return &model.Post{}, errors.New("something went wrong, try again later")
 	}
 
-	user := model.User{
+	userDetails := model.User{
 		ID:    userID,
 		Name:  userName,
 		Email: userEmail,
@@ -48,7 +55,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost)
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 		SharedAt:   time.Now(),
-		Author:     &user,
+		Author:     &userDetails,
 		SharedUser: nil,
 		Likes:      nil,
 		Dislikes:   nil,
@@ -119,12 +126,12 @@ func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (
 	authenticated := auth.Authenticate(email, password)
 	if !authenticated {
 		utils.HandleError(errors.New("wrong email or password error"), false)
-		return nil, errors.New("wrong email or password error") 
+		return &model.User{}, errors.New("wrong email or password error") 
 	}
 	
 	token, err := auth.GenerateToken(email)
 	if err != nil{
-		return nil, err
+		return &model.User{}, err
 	}
 
 	return &model.User{
@@ -140,7 +147,7 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input *model.Token)
 	email, err := auth.ParseToken(tokenStr)
 	if err != nil {
 		utils.HandleError(errors.New("access denied"), false)
-		return nil, errors.New("access denied")
+		return &model.User{}, errors.New("access denied")
 	}
 
 	token, _ := auth.GenerateToken(email)
