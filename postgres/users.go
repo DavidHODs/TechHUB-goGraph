@@ -72,11 +72,11 @@ func ReturnUserDetails(userId string) (string, string, string, error) {
 }
 
 // returns the id and hashed password of user by checking via supplied email in the database. Will probably refactor later as ReturnUserDetails already serve nearly the same purpose
-func GetUserDetailsByEmail(email string) (string, string, error) {
-	stmt, err := Db.Prepare(`SELECT id, password from tech.users where email = $1`)
+func GetUserDetailsByEmail(email string) (string, string, string, error) {
+	stmt, err := Db.Prepare(`SELECT id, password, name from tech.users where email = $1`)
 	if err != nil {
 		utils.HandleError(err, false)
-		return "", "", err
+		return "", "", "", err
 	}
 
 	defer stmt.Close()
@@ -84,18 +84,19 @@ func GetUserDetailsByEmail(email string) (string, string, error) {
 	var (
 		id string = ""
 		password string = ""
+		name string = ""
 	)
 
-	err = stmt.QueryRow(email).Scan(&id, &password)
+	err = stmt.QueryRow(email).Scan(&id, &password, &name)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.HandleError(errors.New("user does not exist"), false)
-			return "", "", errors.New("user does not exist")
+			return "", "", "", errors.New("user does not exist")
 		}
 
-		return "", "", err
+		return "", "", "", err
 	}
 
-	return id, password, nil
+	return id, password, name, nil
 }

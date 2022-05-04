@@ -19,11 +19,13 @@ import (
 // returns created post author data
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
 	
-	user := auth.ForContext(ctx)
-	if user == nil {
-		utils.HandleError(errors.New(("access denied")), false)
-		return &model.Post{}, errors.New(("access denied"))
-	}
+	_ = ctx.Value("AuthToken")
+
+	// authEmail, _ := auth.ParseToken(string(token))
+	// if user == nil {
+	// 	utils.HandleError(errors.New(("access denied")), false)
+	// 	return &model.Post{}, errors.New(("access denied"))
+	// }
 
 	postAuthor := input.Author
 	post := input.Body
@@ -75,7 +77,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		utils.HandleError(err, false)
 	}
 
-	token, _ := auth.GenerateToken(email)
+	token, _ := auth.GenerateToken(ctx, email)
 
 	return &model.User{
 		ID:        id,
@@ -85,7 +87,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		Token:     token,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-	}, err
+	}, nil
 }
 
 // returns liked post data 
@@ -121,7 +123,9 @@ func (*mutationResolver) LikePost(ctx context.Context, input *model.UserPostID) 
 // returns minor details of user on succesful login
 func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (*model.User, error) {
 	email := input.Email
-	password := input.Password
+	password := input.Password 
+
+	auth.GenerateToken(ctx, email)
 
 	authenticated := auth.Authenticate(email, password)
 	if !authenticated {
@@ -129,7 +133,7 @@ func (*mutationResolver) Login(ctx context.Context, input *model.LoginDetails) (
 		return &model.User{}, errors.New("wrong email or password error") 
 	}
 	
-	token, err := auth.GenerateToken(email)
+	token, err := auth.GenerateToken(ctx, email)
 	if err != nil{
 		return &model.User{}, err
 	}
@@ -150,7 +154,7 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input *model.Token)
 		return &model.User{}, errors.New("access denied")
 	}
 
-	token, _ := auth.GenerateToken(email)
+	token, _ := auth.GenerateToken(ctx, email)
 	
 	return &model.User{
 		Token:     token,

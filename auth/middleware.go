@@ -31,13 +31,15 @@ func AuthMiddleware() func(http.Handler) http.Handler {
 				return
 			}
 
-			user := model.User{Email: email}
-			id, _, err := myDb.GetUserDetailsByEmail(email)
+			user := model.User{}
+			id, _, name, err := myDb.GetUserDetailsByEmail(email)
 			if err != nil {
 				next.ServeHTTP(w, r)
 				return
 			}
 			user.ID = id
+			user.Name = name
+			user.Email = email
 
 			ctx := context.WithValue(r.Context(), userCtxKey, &user)
 
@@ -48,6 +50,6 @@ func AuthMiddleware() func(http.Handler) http.Handler {
 }
 
 func ForContext(ctx context.Context) *model.User {
-	raw, _ := ctx.Value(userCtxKey).(*model.User)
+	raw, _ := ctx.Value("AuthToken").(*model.User)
 	return raw
 }

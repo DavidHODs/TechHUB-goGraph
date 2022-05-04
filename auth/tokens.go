@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // Generates a token and assigns an email to its claims
-func GenerateToken(email string) (string, error) {
+func GenerateToken(ctx context.Context, email string) (string, error) {
 	_, _, _, _, _, _, _, key := utils.LoadEnv()
 	secretKey := []byte(key)
 
@@ -23,7 +24,8 @@ func GenerateToken(email string) (string, error) {
 		utils.HandleError(errors.New("error in generating key"), false)
 		return "", err
 	}
-
+	
+	_ = context.WithValue(ctx, "AuthToken", tokenString)
 	return tokenString, nil
 }
 
